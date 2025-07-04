@@ -80,24 +80,21 @@ class KoleksiModel extends Model
     }
 
     // query builder
-    public function getDataKoleksi()
+    public function getDataKoleksi($per_halaman, $offset)
     {
         // return $this->select('*')->get();
         $users = DB::table('koleksis')
-            ->select('id', 'nama_koleksi', 'jenis_koleksi', 'kategori', 'penerbit', 'penulis', 'tahun_terbit', 'deskripsi')
+            ->select('id', 'nama_koleksi', 'jenis_koleksi', 'kategori', 'penerbit', 'penulis', 'tahun_terbit', 'deskripsi');
+
+        $total_data = $users->clone()->count();
+        $data = $users->offset($offset)
+            ->limit($per_halaman)
             ->get();
-        return $users->map(function ($item) {
-            return [
-                'id' => $item->id,
-                'nama_koleksi' => $item->nama_koleksi,
-                'jenis_koleksi' => $item->jenis_koleksi,
-                'kategori' => $item->kategori,
-                'penerbit' => $item->penerbit,
-                'penulis' => $item->penulis,
-                'tahun_terbit' => $item->tahun_terbit,
-                'deskripsi' => $item->deskripsi
-            ];
-        });
+
+        return [
+            'total_data' => $total_data,
+            'data' => $data
+        ];
     }
 
     public function tambahKoleksi()

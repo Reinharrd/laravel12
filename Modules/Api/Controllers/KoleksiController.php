@@ -11,18 +11,27 @@ class KoleksiController extends Controller
 {
     public function getDataKoleksi(Request $request)
     {
+        $per_halaman = 3;
+        $halaman = (int) $request->query('halaman', 1);
+        $offset = ($halaman - 1) * $per_halaman;
         $koleksiModel = new KoleksiModel();
-        $data = $koleksiModel->getDataKoleksi();
-        if ($data->isEmpty()) {
+        $data = $koleksiModel->getDataKoleksi($per_halaman, $offset);
+        if ($data['total_data'] == 0) {
             return response()->json([
                 'message' => 'Data koleksi tidak ditemukan'
             ], 404);
-        } else {
-            return response()->json([
-                'message' => 'Data koleksi berhasil ditemukan',
-                'data' => $data
-            ], 200);
         }
+        $total_halaman = ceil($data['total_data'] / $per_halaman);
+        return response()->json([
+            'message' => 'Data koleksi berhasil ditemukan',
+            'data' => $data['data'],
+            'pagination' => [
+                'halaman' => $halaman,
+                'per_halaman' => $per_halaman,
+                'total_data' => $data['total_data'],
+                'total_halaman' => $total_halaman,
+            ]
+        ], 200);
     }
     public function tambahKoleksi(Request $request)
     {
