@@ -7,6 +7,8 @@ use Modules\Api\Controllers\KoleksiController;
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/koleksi', [KoleksiController::class, 'getDataKoleksi']);
     Route::post('/koleksi/tambah', [KoleksiController::class, 'tambahKoleksi']);
+    Route::put('/koleksi/update/{id}', [KoleksiController::class, 'updateKoleksi']);
+    Route::delete('/koleksi/delete/{id}', [KoleksiController::class, 'deleteKoleksi']);
 });
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);

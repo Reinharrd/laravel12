@@ -20,6 +20,7 @@ class KoleksiModel extends Model
         'deskripsi'
     ];
 
+    // rules & messages
     public function rulesCreate()
     {
         return [
@@ -52,6 +53,33 @@ class KoleksiModel extends Model
         ];
     }
 
+    public function rulesUp()
+    {
+        return [
+            'nama_koleksi' => 'required',
+            'jenis_koleksi' => 'required',
+            'kategori' => 'required',
+            'penerbit' => 'required',
+            'penulis' => 'required',
+            'tahun_terbit' => 'required|integer',
+            'deskripsi' => 'nullable'
+        ];
+    }
+
+    public function messagesUp()
+    {
+        return [
+            'nama_koleksi.required' => 'Nama koleksi wajib diisi',
+            'jenis_koleksi.required' => 'Jenis koleksi wajib diisi',
+            'kategori.required' => 'Kategori wajib diisi',
+            'penerbit.required' => 'Penerbit wajib diisi',
+            'penulis.required' => 'Penulis wajib diisi',
+            'tahun_terbit.required' => 'Tahun terbit wajib diisi',
+            'tahun_terbit.integer' => 'Tahun terbit harus berupa angka'
+        ];
+    }
+
+    // query builder
     public function getDataKoleksi()
     {
         // return $this->select('*')->get();
@@ -83,5 +111,27 @@ class KoleksiModel extends Model
             'tahun_terbit' => request('tahun_terbit'),
             'deskripsi' => request('deskripsi')
         ]);
+    }
+
+    public function updateKoleksi($id, $data)
+    {
+        return DB::table('koleksis')
+            ->where('id', $id)
+            ->update([
+                'nama_koleksi' => $data['nama_koleksi'],
+                'jenis_koleksi' => $data['jenis_koleksi'],
+                'kategori' => $data['kategori'],
+                'penerbit' => $data['penerbit'],
+                'penulis' => $data['penulis'],
+                'tahun_terbit' => $data['tahun_terbit'],
+                'deskripsi' => $data['deskripsi']
+            ]);
+    }
+
+    public function deleteKoleksi($id)
+    {
+        return DB::table('koleksis')
+            ->where('id', $id)
+            ->delete();
     }
 }
