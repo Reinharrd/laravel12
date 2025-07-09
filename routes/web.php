@@ -12,4 +12,8 @@ Route::get('/login', function () {
 
 Route::get('/beranda', function () {
     return view('beranda');
-});
+})->name('beranda');
+
+Route::get('/kategori', function () {
+    return view('kategori');
+})->name('kategori');

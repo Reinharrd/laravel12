@@ -49,8 +49,10 @@ class AuthController extends Controller
     public function me(Request $request)
     {
         // return $request->user();
-        $user = $request->user();
+        $key = env('KEY_API');
+        $iv = random_bytes(16);
 
+        $user = $request->user();
         if (!$user) {
             return response()->json(['message' => 'User not authenticated'], 401);
         }
@@ -58,10 +60,12 @@ class AuthController extends Controller
             'nama' => $user->name,
             'email' => $user->email
         ];
+        $encrypted = openssl_encrypt(json_encode($data), 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+        $result = base64_encode($iv) . ':' . base64_encode($encrypted);
         // $encryptData = Str::of(json_encode($data))->encrypt();
         // $decryptData = Str::of(json_encode($data))->decrypt();
         // $encryptData = Crypt::encryptString(json_encode($data));
-        return response()->json(['data' => $data]);
+        return response()->json(['encrypted' => $result], 200);
     }
 
     public function logout(Request $request)
