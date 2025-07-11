@@ -12,7 +12,8 @@
     <div class="container mx-0">
         <div class="row justify-content-center align-items-center">
             <div class="col-md-8">
-                <a class="btn btn-danger" href="{{ route('beranda') }}">Kembali ke Beranda</a>
+                <a class="btn btn-danger btn-sm" href="{{ route('beranda') }}">Kembali ke Beranda</a>
+                <button class="btn btn-info btn-sm" onclick="openTambahModal()">tambah kategori</button>
                 <h1 class="text-center" style="font-size: 50px">Kategori</h1>
                 <table class="table" id="table-kategori">
                     <thead>
@@ -27,6 +28,7 @@
             </div>
         </div>
     </div>
+    //modal edit
     <div class="modal fade" id="modaledit" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -44,6 +46,27 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" onclick="simpanKategori()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    //modal tambah
+    <div class="modal fade" id="modaltambah" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Tambah Kategori</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <label for="nama_kategori">Nama Kategori</label>
+                    <input type="text" class="form-control" id="inputnama_kategori" placeholder="Masukkan nama kategori">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="tambahKategori()">Tambah</button>
                 </div>
             </div>
         </div>
@@ -82,9 +105,13 @@
         }
 
         function openEditModal(id, nama_kategori) {
-            document.getElementById('edit_id_kategori').value = id;
-            document.getElementById('nama_kategori').value = nama_kategori;
+            $('#edit_id_kategori').val(id);
+            $('#nama_kategori').val(nama_kategori);
             $('#modaledit').modal('show');
+        }
+
+        function openTambahModal() {
+            $('#modaltambah').modal('show');
         }
 
         function getData() {
@@ -163,7 +190,7 @@
                 return;
             }
             $.ajax({
-                url: apiURL + 'kategori/update/' + (id ? id : ''),
+                url: apiURL + 'kategori/update/' + btoa(id ? id : ''),
                 type: 'PUT',
                 dataType: 'json',
                 contentType: 'application/json',
@@ -186,6 +213,43 @@
                             icon: 'error',
                             title: 'Gagal',
                             text: response.message || 'Terjadi kesalahan saat menyimpan kategori.',
+                            confirmButtonColor: '#0951BC'
+                        });
+                    }
+                }
+            })
+        }
+
+        function tambahKategori() {
+            const nama_kategori = $('#inputnama_kategori').val();
+            if (!nama_kategori) {
+                Swal.fire('Gagal', 'Nama kategori tidak boleh kosong.', 'error');
+                return;
+            }
+            $.ajax({
+                url: apiURL + 'kategori/tambah',
+                type: 'POST',
+                dataType: 'json',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    nama_kategori: nama_kategori
+                }),
+                success: function(response) {
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Berhasil',
+                            text: 'Kategori berhasil ditambahkan.',
+                            confirmButtonColor: '#0951BC'
+                        }).then(() => {
+                            $('#modaltambah').modal('hide');
+                            getData();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Gagal',
+                            text: response.message || 'Terjadi kesalahan saat menambahkan kategori.',
                             confirmButtonColor: '#0951BC'
                         });
                     }
