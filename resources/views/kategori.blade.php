@@ -298,6 +298,12 @@
             //     });
             // });
         })
+        setTimeout(() => {
+            window.Echo.channel('channelCoba')
+                .listen('.pesan', (e) => {
+                    console.log(e.message);
+                });
+        }, 2000);
     </script>
 </body>
 

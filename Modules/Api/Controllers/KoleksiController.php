@@ -22,6 +22,9 @@ class KoleksiController extends Controller
             ], 404);
         }
         $total_halaman = ceil($data['total_data'] / $per_halaman);
+        event(new \App\Events\pesan([
+            'message' => 'Data koleksi berhasil ditemukan',
+        ]));
         return response()->json([
             'message' => 'Data koleksi berhasil ditemukan',
             'data' => $data['data'],
